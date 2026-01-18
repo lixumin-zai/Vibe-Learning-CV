@@ -6,9 +6,15 @@ import defaultMdxComponents from 'fumadocs-ui/mdx';
 import browserCollections from 'fumadocs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
-import { Book, Brain, Code, Cpu, Layers } from 'lucide-react';
+import { Book, Brain, Code, Cpu, Layers, Layout } from 'lucide-react';
 
 const ROOTS = [
+    {
+        title: 'Introduction',
+        description: 'Welcome to CV Tutorial',
+        icon: <Layout className="text-foreground" />,
+        url: '/docs',
+    },
     {
         title: 'CV Fundamentals',
         description: 'Basics of Image Processing',
@@ -53,7 +59,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     // Find the sub-node in the tree that matches the current root
     const rootNode = fullTree.children.find((node) =>
         node.type === 'page' ? node.url.includes(`/${currentRoot}`)
-            : node.url?.includes(`/${currentRoot}`)
+            : (node.type === 'folder' && node.index?.url.includes(`/${currentRoot}`))
     ) || fullTree;
 
     // We want to pass the specific subtree to the layout
@@ -66,7 +72,7 @@ export async function loader({ params }: Route.LoaderArgs) {
         (node) => node.type === 'folder' && node.name === ROOTS.find(r => r.url.endsWith(currentRoot))?.title
     ) || fullTree.children.find(
         // Fallback: search by URL pattern if name doesn't match exactly
-        (node) => node.url && node.url.includes(`/${currentRoot}`)
+        (node) => 'url' in node && node.url && typeof node.url === 'string' && node.url.includes(`/${currentRoot}`)
     )) as typeof fullTree | undefined;
 
     return {
@@ -105,9 +111,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             {...baseOptions()}
             tree={pageTree}
             sidebar={{
-                rootToggle: {
-                    options: ROOTS
-                }
+                tabs: ROOTS
             }}
         >
             <Content />
