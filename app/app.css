@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap');
+
+@theme {
+    --font-sans: 'Exo', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+}
+
+:root {
+    /* Primary: #FFFFFF (Background) */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+
+    /* Secondary: #E5E5E5 */
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 40%;
+
+    /* CTA: #007AFF (Primary Brand Color) */
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Card / Popover */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    /* Borders */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+
+    /* Accent: #888888 (approx) */
+    --secondary: 0 0% 53%;
+    /* #888888 */
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
+
+    --ring: 211 100% 50%;
+
+    /* Fumadocs specific */
+    --color-fd-primary: var(--primary);
+    --color-fd-background: var(--background);
+    --color-fd-foreground: var(--foreground);
+    --color-fd-muted: var(--muted);
+    --color-fd-accent: var(--accent);
+}
+
+.dark {
+    /* Dark Mode adjustments */
+    --background: 0 0% 10%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 211 100% 50%;
+}

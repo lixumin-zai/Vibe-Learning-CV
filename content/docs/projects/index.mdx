@@ -1,0 +1,43 @@
+---
+title: Project Records
+description: Real-world applications and experiments
+---
+
+import { ProjectCard } from '@/components/demo/ProjectCard';
+
+# Project Records
+
+A gallery of completed projects, experiments, and PoCs.
+
+## 🏆 Featured Projects
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <ProjectCard 
+    title="Autonomous Lane Keeper" 
+    category="Robotics"
+    description="Real-time lane detection and steering angle prediction using a dual-camera setup and NVIDIA Jetson Nano."
+    tech={['Python', 'OpenCV', 'PyTorch', 'Jetson']}
+    gradient="from-blue-500 to-cyan-400"
+  />
+  <ProjectCard 
+    title="Medical Scan Segmenter" 
+    category="Healthcare"
+    description="Automated tumor segmentation in MRI scans using a modified U-Net architecture with attention gates."
+    tech={['TensorFlow', 'Keras', 'Medical Imaging']}
+    gradient="from-emerald-400 to-teal-500"
+  />
+  <ProjectCard 
+    title="Retail Analytics Dashboard" 
+    category="Analytics"
+    description="Customer footfall tracking and heatmap generation for retail stores using existing CCTV feeds."
+    tech={['YOLO', 'React', 'FastAPI', 'WebSockets']}
+    gradient="from-orange-400 to-pink-500"
+  />
+  <ProjectCard 
+    title="Gesture Control Interface" 
+    category="HCI"
+    description="Controlling system volume and media playback using hand gestures recognized via MediaPipe."
+    tech={['MediaPipe', 'Python', 'PyAutoGUI']}
+    gradient="from-purple-500 to-indigo-500"
+  />
+</div>
