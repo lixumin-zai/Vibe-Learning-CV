@@ -6,7 +6,16 @@ import defaultMdxComponents from 'fumadocs-ui/mdx';
 import browserCollections from 'fumadocs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
-import { Book, Brain, Code, Cpu, Layers, Layout } from 'lucide-react';
+import { Book, Brain, Code, Cpu, Layers, Layout, Rocket, ScanEye, Terminal, MousePointer2 } from 'lucide-react';
+
+import { SamplingDemo } from '@/components/docs/cv-fundamentals/image-perception/SamplingDemo';
+import { QuantizationDemo } from '@/components/docs/cv-fundamentals/image-perception/QuantizationDemo';
+import { AliasingDemo } from '@/components/docs/cv-fundamentals/image-perception/AliasingDemo';
+
+const icons = {
+  Book, Brain, Code, Cpu, Layers, Layout, Rocket, ScanEye, Terminal, MousePointer2,
+  SamplingDemo, QuantizationDemo, AliasingDemo
+};
 
 const ROOTS = [
     {
@@ -89,13 +98,20 @@ const clientLoader = browserCollections.docs.createClientLoader({
         },
     ) {
         return (
-            <DocsPage toc={toc} {...props}>
-                <title>{frontmatter.title}</title>
-                <meta name="description" content={frontmatter.description} />
-                <DocsTitle>{frontmatter.title}</DocsTitle>
-                <DocsDescription>{frontmatter.description}</DocsDescription>
-                <DocsBody>
-                    <Mdx components={{ ...defaultMdxComponents }} />
+            <DocsPage
+                toc={toc}
+                tableOfContent={{
+                    style: 'clerk',
+                    single: false
+                }}
+                {...props}
+            >
+                <DocsTitle className="text-4xl font-extrabold tracking-tight mb-4">{frontmatter.title}</DocsTitle>
+                <DocsDescription className="text-lg text-muted-foreground mb-8 border-l-4 border-primary/20 pl-4 italic">
+                    {frontmatter.description}
+                </DocsDescription>
+                <DocsBody className="prose-lg prose-headings:font-sans">
+                    <Mdx components={{ ...defaultMdxComponents, ...icons }} />
                 </DocsBody>
             </DocsPage>
         );
