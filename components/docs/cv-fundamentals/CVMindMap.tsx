@@ -1,0 +1,227 @@
+"use client";
+
+import { ExcalidrawCanvas } from '@/components/demo/ExcalidrawCanvas';
+import { generateMindMapElements } from '@/utils/mindmap-generator';
+import { useMemo, useState } from 'react';
+import { Maximize2, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+
+const OUTLINE_TEXT = `### **模块一：图像基础与底层表示 (Image Fundamentals)**
+
+1.  **数字图像感知**
+    *   图像数字化：采样 (Sampling) 与 量化 (Quantization)。
+    *   空间分辨率 (Spatial Resolution) 与 灰度级分辨率。
+    *   奈奎斯特采样定理与混叠现象 (Aliasing)。
+2.  **像素与坐标系**
+    *   像素坐标系 (u, v) vs 图像坐标系 (x, y)。
+    *   像素邻域：4-邻域、8-邻域、连通性 (Connectivity)。
+    *   像素距离度量：欧氏距离、曼哈顿距离、棋盘距离。
+3.  **色彩理论 (Colorimetry)**
+    *   **基色空间**：RGB (加色法), CMY (减色法)。
+    *   **感知空间**：HSV, HSL (符合人眼直觉，抗光照干扰)。
+    *   **工业/电视标准**：YUV, YCbCr, Lab, Luv。
+    *   **色彩转换**：Bayer 阵列 (Demosaicing/去马赛克), 灰度化公式 (加权平均)。
+4.  **图像插值与几何变换基础**
+    *   **插值算法**：最近邻 (Nearest), 双线性 (Bilinear), 双三次 (Bicubic)。
+    *   **基础变换**：平移, 旋转, 翻转, 缩放 (Resize), 裁剪 (Crop)。
+
+### **模块二：像素级处理与增强 (Pixel-wise Processing)**
+
+1.  **点运算 (Point Operations)**
+    *   线性变换：亮度 (Brightness) 与 对比度 (Contrast) 调整。
+    *   非线性变换：对数变换 (Log), 指数变换, Gamma 校正 (幂律变换)。
+    *   逻辑运算：AND (掩膜Mask), OR, XOR, NOT (反色)。
+    *   算术运算：图像加权融合 (Blending/Alpha channel), 图像减法 (差分检测)。
+2.  **直方图处理 (Histogram Processing)**
+    *   直方图统计与归一化。
+    *   **直方图均衡化 (HE)**：全局均衡化原理。
+    *   **自适应均衡化 (AHE)** 与 **限制对比度自适应均衡化 (CLAHE)**。
+    *   直方图规定化 (Matching)：让图像匹配特定色调。
+    *   直方图反向投影 (Backprojection)：用于简单的色彩追踪。
+3.  **二值化与分割基础**
+    *   简单阈值：Binary, Truncate, ToZero。
+    *   **全局自动阈值**：Otsu (最大类间方差), Triangle, Entropy-based。
+    *   **局部自适应阈值**：Adaptive Mean, Adaptive Gaussian (解决光照不均)。
+
+### **模块三：空间域滤波与变换 (Spatial Filtering)**
+
+1.  **卷积与相关 (Convolution & Correlation)**
+    *   卷积核 (Kernel/Filter) 概念。
+    *   边界填充策略 (Padding)：Zero, Reflect, Replicate.
+2.  **平滑滤波 (Smoothing)**
+    *   线性滤波：均值滤波 (Box Filter), 高斯滤波 (Gaussian Filter)。
+    *   非线性滤波：中值滤波 (Median, 去椒盐噪声), 双边滤波 (Bilateral, 保边去噪)。
+3.  **锐化与导数 (Sharpening & Derivatives)**
+    *   一阶导数算子：Robert, Sobel, Prewitt, Scharr。
+    *   二阶导数算子：Laplacian, Laplacian of Gaussian (LoG)。
+    *   钝化掩蔽 (Unsharp Masking) 与 高提升滤波。
+4.  **图像金字塔 (Pyramids)**
+    *   高斯金字塔 (Gaussian Pyramid)：下采样。
+    *   拉普拉斯金字塔 (Laplacian Pyramid)：图像重建与融合。
+
+### **模块四：频域处理 (Frequency Domain)**
+
+1.  **傅里叶变换基础**
+    *   一维/二维离散傅里叶变换 (DFT/FFT)。
+    *   频谱图理解：幅度谱 (Magnitude) 与 相位谱 (Phase)。
+    *   频谱中心化 (Shift)。
+2.  **频域滤波**
+    *   低通滤波器 (LPF)：理想, 巴特沃斯 (Butterworth), 高斯 (Gaussian)。
+    *   高通滤波器 (HPF)：边缘提取。
+    *   带通与带阻滤波器：去除周期性噪声（如摩尔纹）。
+    *   同态滤波 (Homomorphic)：光照与反射分离，增强暗部细节。
+
+### **模块五：形态学与高级分割 (Morphology & Segmentation)**
+
+1.  **形态学基元**
+    *   结构元素 (Structuring Element)：矩形, 十字, 椭圆。
+    *   基础操作：腐蚀 (Erode), 膨胀 (Dilate)。
+2.  **组合形态学操作**
+    *   开运算 (Opening), 闭运算 (Closing)。
+    *   形态学梯度 (Morphological Gradient)：提取物体轮廓。
+    *   顶帽 (Top-hat) 与 黑帽 (Black-hat)：校正不均匀背景光照。
+    *   击中击不中变换 (Hit-or-Miss)：特定形状检测。
+3.  **高级分割算法**
+    *   连通域分析 (Connected Components)。
+    *   距离变换 (Distance Transform)。
+    *   分水岭算法 (Watershed)：解决粘连物体分割。
+    *   GrabCut：交互式前景提取 (基于高斯混合模型 GMM)。
+    *   超像素分割 (Superpixels)：SLIC, SEEDS。
+    *   MeanShift 聚类分割。
+
+### **模块六：特征检测与描述 (Feature Extraction)**
+
+1.  **边缘与轮廓**
+    *   **Canny 边缘检测完整流程** (高斯->梯度->NMS->双阈值)。
+    *   **Hough 变换**：标准霍夫变换 (SHT), 概率霍夫变换 (PPHT), 霍夫圆检测。
+    *   轮廓查找 (FindContours)：拓扑结构 (Hierarchy), 轮廓近似 (Approximation), 凸包 (Convex Hull)。
+2.  **角点与关键点 (Interest Points)**
+    *   Moravec 角点。
+    *   **Harris 角点**：数学推导, 响应函数。
+    *   Shi-Tomasi (Good Features to Track)。
+    *   Hessian 矩阵与斑点检测 (Blobs)。
+    *   **FAST 角点**：高速检测。
+3.  **特征描述子 (Descriptors)**
+    *   **SIFT**：尺度空间极值, 关键点定位, 方向赋值, 128维描述符。
+    *   **SURF**：Haar小波, 积分图加速。
+    *   **ORB**：oFAST + rBRIEF, 二进制描述符, 汉明距离。
+    *   **HOG**：Cell/Block 归一化, 梯度方向直方图 (行人检测)。
+    *   其他：BRISK, AKAZE, FREAK.
+4.  **区域特征**
+    *   MSER (最大稳定极值区域)：文本检测常用。
+    *   LBP (局部二值模式)：纹理分析, 人脸识别。
+
+### **模块七：特征匹配与优化 (Matching & Optimization)**
+
+1.  **匹配策略**
+    *   暴力匹配 (Brute-Force Matcher)。
+    *   FLANN (快速近似最近邻库) 与 KD-Tree。
+    *   交叉检查 (Cross-check)。
+    *   比率测试 (Lowe's Ratio Test)。
+2.  **错误剔除与模型拟合**
+    *   最小二乘法 (Least Squares)。
+    *   **RANSAC (随机采样一致性)**：原理与迭代次数计算。
+    *   LMEDS (最小中值平房)。
+
+### **模块八：几何视觉与相机模型 (Geometry & 3D)**
+
+1.  **2D 几何变换矩阵**
+    *   齐次坐标 (Homogeneous Coordinates)。
+    *   刚体变换 (Euclidean), 相似变换 (Similarity)。
+    *   仿射变换 (Affine)：3点求解, 平行性保持。
+    *   透视变换 (Projective/Homography)：4点求解, 自由度分析。
+2.  **相机成像物理**
+    *   针孔相机模型 (Pinhole Model)。
+    *   内参矩阵 (Intrinsics): $f_x, f_y, c_x, c_y$。
+    *   外参矩阵 (Extrinsics): 旋转矩阵 $R$ (罗德里格斯公式), 平移向量 $T$。
+    *   镜头畸变：径向畸变 ($k_1, k_2, k_3$), 切向畸变 ($p_1, p_2$)。
+3.  **相机标定 (Calibration)**
+    *   张正友标定法 (Zhang's Method)。
+    *   重投影误差 (Reprojection Error)。
+4.  **多视角几何 (Multi-view Geometry)**
+    *   对极几何 (Epipolar Geometry)：极点, 极线。
+    *   本征矩阵 (Essential Matrix) vs 基础矩阵 (Fundamental Matrix)。
+    *   单应性矩阵 (Homography) 在平面场景的应用。
+    *   三角测量 (Triangulation)：2D点恢复3D坐标。
+    *   PnP 问题 (Perspective-n-Point)：已知3D点求相机位姿。
+
+### **模块九：运动分析与视频处理 (Motion & Video)**
+
+1.  **背景建模**
+    *   帧差法 (Frame Differencing)。
+    *   平均背景法 / 运行平均 (Running Average)。
+    *   高斯混合模型 (MOG/MOG2)：适应动态背景。
+2.  **光流法 (Optical Flow)**
+    *   亮度恒定假设 (Brightness Constancy Assumption)。
+    *   **稀疏光流**：Lucas-Kanade (LK) 算法, 金字塔 LK。
+    *   **稠密光流**：Farneback 算法, Horn-Schunck。
+3.  **目标追踪 (Object Tracking)**
+    *   均值漂移 (MeanShift)。
+    *   连续自适应均值漂移 (CamShift)。
+    *   卡尔曼滤波 (Kalman Filter)：预测与更新。
+    *   相关滤波追踪 (KCF, MOSSE)。`;
+
+export function CVMindMap() {
+    const [isOpen, setIsOpen] = useState(false);
+    const elements = useMemo(() => generateMindMapElements(OUTLINE_TEXT), []);
+
+    const initialData = {
+        elements,
+        appState: {
+            viewBackgroundColor: "#ffffff",
+            currentItemFontFamily: 1,
+            // Center the view roughly
+            scrollX: 100,
+            scrollY: 100,
+            zoom: {
+                value: 0.5 // Zoom out to see more
+            }
+        }
+    };
+
+    return (
+        <>
+            <button
+                onClick={() => setIsOpen(true)}
+                className="group relative flex items-center justify-center w-full h-64 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/5 hover:bg-muted/10 hover:border-primary/50 transition-all duration-300"
+            >
+                <div className="flex flex-col items-center gap-3 text-muted-foreground group-hover:text-primary">
+                    <div className="p-4 rounded-full bg-background shadow-sm border border-border group-hover:scale-110 transition-transform">
+                        <Maximize2 className="w-8 h-8" />
+                    </div>
+                    <span className="font-medium text-lg">Open Full Curriculum Mind Map</span>
+                    <span className="text-xs opacity-70">Generated from Outline</span>
+                </div>
+            </button>
+
+            {isOpen && createPortal(
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="relative w-full h-full max-w-[95vw] max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+                            <h3 className="font-semibold text-foreground flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                Computer Vision Curriculum Map
+                            </h3>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="p-2 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        
+                        {/* Canvas Container */}
+                        <div className="flex-1 relative bg-white">
+                            <ExcalidrawCanvas 
+                                className="w-full h-full" 
+                                initialData={initialData}
+                            />
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
+    );
+}

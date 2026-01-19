@@ -1,0 +1,28 @@
+{
+    "nav": [
+        {
+            "title": "Introduction",
+            "url": "/docs"
+        },
+        {
+            "title": "CV Fundamentals",
+            "url": "/docs/cv-fundamentals"
+        },
+        {
+            "title": "Deep Learning",
+            "url": "/docs/deep-learning"
+        },
+        {
+            "title": "Projects",
+            "url": "/docs/projects"
+        },
+        {
+            "title": "Tools",
+            "url": "/docs/tools"
+        },
+        {
+            "title": "Models",
+            "url": "/docs/models"
+        }
+    ]
+}
