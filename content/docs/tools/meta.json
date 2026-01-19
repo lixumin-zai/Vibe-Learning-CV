@@ -3,6 +3,7 @@
     "pages": [
         "index",
         "interactive-demos",
+        "mindmap",
         "tutorials"
     ]
 }

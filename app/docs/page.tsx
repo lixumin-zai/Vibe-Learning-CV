@@ -11,10 +11,13 @@ import { Book, Brain, Code, Cpu, Layers, Layout, Rocket, ScanEye, Terminal, Mous
 import { SamplingDemo } from '@/components/docs/cv-fundamentals/image-perception/SamplingDemo';
 import { QuantizationDemo } from '@/components/docs/cv-fundamentals/image-perception/QuantizationDemo';
 import { AliasingDemo } from '@/components/docs/cv-fundamentals/image-perception/AliasingDemo';
+import { ExcalidrawCanvas } from '@/components/demo/ExcalidrawCanvas';
+import { ExcalidrawModal } from '@/components/demo/ExcalidrawModal';
+import { CVMindMap } from '@/components/docs/cv-fundamentals/CVMindMap';
 
 const icons = {
   Book, Brain, Code, Cpu, Layers, Layout, Rocket, ScanEye, Terminal, MousePointer2,
-  SamplingDemo, QuantizationDemo, AliasingDemo
+  SamplingDemo, QuantizationDemo, AliasingDemo, ExcalidrawCanvas, ExcalidrawModal, CVMindMap
 };
 
 const ROOTS = [
