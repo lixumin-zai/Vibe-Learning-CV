@@ -1,6 +1,7 @@
 {
     "title": "模块一：图像基础与底层表示",
     "pages": [
-        "01-Image-Perception"
+        "01-Image-Perception",
+        "02-Pixels-and-Coordinate-Systems"
     ]   
 }

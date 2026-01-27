@@ -1,0 +1,87 @@
+---
+title: 像素与坐标系
+description: 理解数字图像的离散本质、空间关系与距离度量。
+---
+
+import { CoordinateSystemDemo } from '@/components/docs/cv-fundamentals/pixels-and-coords/CoordinateSystemDemo';
+import { NeighborhoodDemo } from '@/components/docs/cv-fundamentals/pixels-and-coords/NeighborhoodDemo';
+import { DistanceMetricDemo } from '@/components/docs/cv-fundamentals/pixels-and-coords/DistanceMetricDemo';
+
+## 像素坐标系 (Pixel Coordinate System)
+
+在计算机视觉中，数字图像被表示为样本（像素）的二维离散网格。与数学中使用的标准笛卡尔坐标系（$y$ 轴向上增长）不同，图像坐标系的原点 $(0, 0)$ 通常位于**左上角**。
+
+### 坐标约定
+
+- **像素坐标 $(u, v)$**：
+  - $u$（水平轴）：对应列 (columns)，从左向右增长。
+  - $v$（垂直轴）：对应行 (rows)，从上向下增长。
+  - 它们始终是整数，用于在内存中寻址像素。
+
+- **图像/空间坐标 $(x, y)$**：
+  - 通常与 $(u, v)$ 互换使用，但有时暗示连续值（亚像素精度）。
+  - 在某些库（如 OpenCV）中，操作可能期望点为 $(x, y)$ 元组，这直接映射到 $(u, v)$。
+
+<div className="my-6">
+  <CoordinateSystemDemo />
+</div>
+
+图像函数 $f$ 在位置 $(x, y)$ 处的数学表示通常记为 $f(x, y)$，其中 $f$ 代表强度或颜色向量。
+
+---
+
+## 像素邻域与连通性 (Neighborhood & Connectivity)
+
+像素之间的关系是滤波、边缘检测和形态学处理等操作的基础。我们根据相邻关系定义像素的“邻域”。
+
+### 4-邻域 ($N_4$)
+位于坐标 $(x, y)$ 的像素 $p$ 有 4 个水平和垂直邻居：
+$$
+N_4(p) = \{(x+1, y), (x-1, y), (x, y+1), (x, y-1)\}
+$$
+
+### 8-邻域 ($N_8$)
+包含 4-邻域加上 4 个对角线邻居：
+$$
+N_8(p) = N_4(p) \cup \{(x+1, y+1), (x+1, y-1), (x-1, y+1), (x-1, y-1)\}
+$$
+
+### 连通性 (Connectivity)
+连通性用于确定像素是否属于同一区域（例如在分割中）。
+- **4-连通**：如果两个像素在 $N_4$ 中是邻居，则它们是连通的。
+- **8-连通**：如果两个像素在 $N_8$ 中是邻居，则它们是连通的。
+
+<div className="my-6">
+  <NeighborhoodDemo />
+</div>
+
+---
+
+## 距离度量 (Distance Metrics)
+
+测量两个像素 $p(x_1, y_1)$ 和 $q(x_2, y_2)$ 之间的距离对于聚类、模板匹配和路径规划至关重要。
+
+### 欧氏距离 ($L_2$ 范数)
+直线距离，与物理距离一致。
+$$
+D_E(p, q) = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}
+$$
+*特性*：各向同性（旋转不变）。到中心等距的点集形成一个圆。
+
+### 曼哈顿距离 ($L_1$ 范数)
+也称为城市街区距离。它表示如果您只能水平和垂直移动（像网格城市中的出租车）时的路径长度。
+$$
+D_M(p, q) = |x_1 - x_2| + |y_1 - y_2|
+$$
+*特性*：等距点呈菱形。对应于 4-邻域路径搜索。
+
+### 棋盘距离 ($L_\infty$ 范数)
+国际象棋中国王从一个方格移动到另一个方格所需的步数。
+$$
+D_C(p, q) = \max(|x_1 - x_2|, |y_1 - y_2|)
+$$
+*特性*：等距点呈正方形。对应于 8-邻域路径搜索。
+
+<div className="my-6">
+  <DistanceMetricDemo />
+</div>
