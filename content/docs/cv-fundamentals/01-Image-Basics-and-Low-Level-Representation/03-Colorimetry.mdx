@@ -1,0 +1,90 @@
+---
+title: 色彩理论 (Colorimetry)
+description: 探索色彩空间、感知模型与色彩转换算法。
+---
+
+import { RGBMixingDemo } from '@/components/docs/cv-fundamentals/colorimetry/RGBMixingDemo';
+import { HSVVisualizer } from '@/components/docs/cv-fundamentals/colorimetry/HSVVisualizer';
+import { GrayscaleComparison } from '@/components/docs/cv-fundamentals/colorimetry/GrayscaleComparison';
+
+## 基色空间 (Base Color Spaces)
+
+色彩空间是组织色彩的数学模型。最基础的分类基于颜色的混合方式。
+
+### RGB (加色法模型)
+RGB 模型基于光的叠加原理。主要用于显示器、摄像机等发光设备。
+- **Red (红)**, **Green (绿)**, **Blue (蓝)** 是三原色。
+- 当三种光以最大强度混合时，产生**白色**。
+- 当三种光都关闭时，产生**黑色**。
+
+<div className="my-6">
+  <RGBMixingDemo />
+</div>
+
+### CMY (减色法模型)
+CMY 模型基于颜料对光的吸收（反射）原理。主要用于打印机。
+- **Cyan (青)**, **Magenta (品红)**, **Yellow (黄)** 是三原色。
+- 理论上混合在一起产生黑色（实际上通常需要单独的黑色墨水 K，即 CMYK）。
+
+---
+
+## 感知空间 (Perceptual Spaces)
+
+RGB 虽然对硬件友好，但并不符合人类直觉。比如，很难直接说出“深棕色”的 RGB 值是多少。感知空间旨在解决这个问题。
+
+### HSV 与 HSL
+这两个空间使用圆柱坐标系来表示颜色，更符合人类描述颜色的方式。
+
+- **Hue (色相)**: 颜色的类型（如红色、蓝色），用角度 $0^\circ - 360^\circ$ 表示。
+- **Saturation (饱和度)**: 颜色的纯度或鲜艳程度。
+- **Value (明度) / Lightness (亮度)**: 颜色的明暗程度。
+
+<div className="my-6">
+  <HSVVisualizer />
+</div>
+
+#### 应用场景
+- **颜色分割**：在 RGB 空间中，光照变化会同时改变 R、G、B 三个分量，很难设定阈值。而在 HSV 空间中，光照主要影响 V 分量，色相 H 保持相对稳定，因此非常适合做基于颜色的物体追踪。
+
+---
+
+## 工业与电视标准
+
+### YUV / YCbCr
+广泛用于视频压缩（如 JPEG, MPEG）。它将**亮度 (Luma, Y)** 与 **色度 (Chroma, U/V or Cb/Cr)** 分离。
+- **Y**: 亮度分量（黑白图像）。
+- **U/Cb**: 蓝色色度分量。
+- **V/Cr**: 红色色度分量。
+
+**为什么这样设计？**
+人眼对亮度的敏感度远高于对色彩的敏感度。因此，在压缩时可以对色度分量进行**下采样 (Subsampling)**（如 4:2:0），从而在几乎不降低视觉质量的前提下大幅减少数据量。
+
+---
+
+## 色彩转换 (Color Conversion)
+
+### 灰度化 (Grayscale)
+将彩色图像转换为灰度图像是图像处理的第一步，因为很多算法（如边缘检测）只需要亮度信息。
+
+#### 1. 平均值法 (Average)
+$$
+Gray = \frac{R + G + B}{3}
+$$
+简单，但由于人眼对不同颜色的敏感度不同，结果可能看起来不够自然。
+
+#### 2. 加权平均法 (Weighted / Luminosity)
+根据人眼对**绿色**最敏感，**蓝色**最不敏感的特性进行加权：
+$$
+Gray = 0.299R + 0.587G + 0.114B
+$$
+这是最常用的标准公式（NTSC 标准）。
+
+<div className="my-6">
+  <GrayscaleComparison />
+</div>
+
+### Bayer 阵列与去马赛克 (Demosaicing)
+大多数数码相机的传感器（CCD/CMOS）是“色盲”的，只能感应光强。为了捕捉彩色，在传感器前覆盖了一个**Bayer 滤色镜阵列 (CFA)**。
+- 每个像素只通过一种颜色的光（红、绿或蓝）。
+- 绿色滤镜的数量是红色或蓝色的两倍（模拟人眼对绿色的敏感度）。
+- **去马赛克**算法通过插值邻域像素来恢复每个像素缺失的两个颜色分量，从而重建全彩图像。
